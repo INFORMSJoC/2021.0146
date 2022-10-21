@@ -1,3 +1,23 @@
+"""
+Module used for creating RSOME models for linear programs.
+
+Copyright 2020-2022 Peng Xiong, & Zhi Chen
+
+This file is a part of RSOME
+
+This file may be used under the terms of the GNU General Public License
+version 3 as published by the Free Software Foundation and appearing in
+the file LICENSE.GPL included in the packaging of this file.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 from .subroutines import sv_to_csr, sp_trans, sparse_mul, sp_lmatmul, sp_matmul
 from .subroutines import array_to_sparse, index_array, check_numeric
 from .subroutines import add_linear
