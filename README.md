@@ -18,9 +18,9 @@ get a more recent version or would like to find support.**
 
 ## Cite
 
-To cite this software, please cite the [paper](https://doi.org/10.1287/ijoc.2019.0934), using the following DOI.
+To cite this software, please cite the paper, using its DOI, and  using the following DOI.
 
-[![DOI](https://zenodo.org/badge/285853815.svg)](https://zenodo.org/badge/latestdoi/285853815)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7463845.svg)](https://doi.org/10.5281/zenodo.7463845)
 
 Below is the BibTex for citing this version of the code.
 
@@ -28,8 +28,9 @@ Below is the BibTex for citing this version of the code.
 @article{chen2021rsome,
   author={Chen, Zhi and Xiong, Peng},
   publisher={INFORMS Journal on Computing},
-  title={RSOME in Python: an open-source package for robust stochastic optimization made easy},
+  title={{RSOME} in Python: an open-source package for robust stochastic optimization made easy, Version v2021.0146},
   year={2022},
+  doi={10.5281/zenodo.7463845}
 }  
 ```
 
