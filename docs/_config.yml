@@ -1,0 +1,15 @@
+math: ture
+markdown: kramdown
+title: RSOME in Python
+show_downloads: "true"
+logo: rso_left.png
+theme: jekyll-theme-minimal
+navigation:
+  - title: Home
+    url: /
+  - title: User Guide
+    url: user_guide
+  - title: Examples
+    url: examples
+  - title: About
+    url: about

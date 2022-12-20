@@ -1,0 +1,332 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="icon" type="image/png"  href="assets/img/favicon.png">
+    <title>RSOME in Python by XiongPengNUS</title>
+
+    <link rel="stylesheet" href="/assets/css/styles.css?v=3c43d41fec63698323ec2e6f7a6a97cc5739c728">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+
+        
+          <img src="/rso_left.png" alt="Logo" width=180/>
+        
+
+        <h1>RSOME in Python</h1>
+
+        <table>
+          <tr>
+          <td><a class="github-button" href="https://github.com/XiongPengNUS/road" data-show-count="true" aria-label="Star XiongPengNUS/road on GitHub">Star</a></td>
+          <td><a class="github-button" href="https://github.com/XiongPengNUS/road/subscription" data-show-count="true" aria-label="Watch XiongPengNUS/road on GitHub">Watch</a></td>
+          <td><a class="github-button" href="https://github.com/XiongPengNUS/road/fork" data-show-count="true" aria-label="Fork XiongPengNUS/road on GitHub">Fork</a></td>
+          </tr>
+        </table>
+
+        <table>
+          
+            
+              <tr><th><a href="/">Home</a></th></tr>
+            
+          
+            
+              <tr><th><a href="/user_guide">User Guide</a></th></tr>
+            
+          
+            
+              <tr><th><a href="/examples">Examples</a></th></tr>
+            
+          
+            
+              <tr><th><a href="/about">About</a></th></tr>
+            
+          
+        </table>
+
+        
+          <ul>
+            <li><a href="https://github.com/XiongPengNUS/rsome/zipball/gh-pages">Download <strong>ZIP File</strong></a></li>
+            <li><a href="https://github.com/XiongPengNUS/rsome/tarball/gh-pages">Download <strong>TAR Ball</strong></a></li>
+            <li><a href="https://github.com/XiongPengNUS/rsome">View On <strong>GitHub</strong></a></li>
+          </ul>
+        
+
+      </header>
+      <section>
+
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+<h1 id="rsome-for-robust-optimization">RSOME for Robust Optimization</h1>
+
+<h2 id="general-formulation-for-robust-optimization-models-">General Formulation for Robust Optimization Models <a name="section2.1"></a></h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">rsome.ro</code> module in RSOME is designed for robust optimization problems, where tailored modeling tools are developed for specifying random variables, uncertainty sets, and objective functions or constraints under worst-case scenarios that may arise from the uncertainty set. Let \(\pmb{z}\in\mathbb{R}^J\) be a vector of random variables and \(\pmb{x}\in\mathbb{R}^{I_x}\)(resp., \(\pmb{y}(\pmb{z})\in\mathbb{R}^{I_y}\)) be the here-and-now  (resp., non-anticipative wait-and-see) decision made before (resp., after) the uncertainty realizes. Models supported in the <code class="language-plaintext highlighter-rouge">ro</code> module can be cast into the following general format:</p>
+
+\[\begin{align}
+\min ~ &amp;\max\limits_{\pmb{z}\in\mathcal{Z}_0} ~\left\{\pmb{a}_0^{\top}(\pmb{z})\pmb{x} + \pmb{b}_0^{\top}\pmb{y}(\pmb{z}) + c_0(\pmb{z})\right\} &amp;&amp;\\
+\text{s.t.} ~ &amp; \max\limits_{\pmb{z}\in\mathcal{Z}_M}\left\{\pmb{a}_m^{\top}(\pmb{z})\pmb{x} + \pmb{b}_m^{\top}\pmb{y}(\pmb{z}) + c_m(\pmb{z})\right\} \leq 0, &amp;&amp; \forall m \in \mathcal{M}_1 \\
+&amp; y_i \in \mathcal{L}(\mathcal{J}_i) &amp;&amp;\forall i \in [I_y] \\
+&amp; \pmb{x} \in \mathcal{X}. &amp;&amp;
+\end{align}\]
+
+<p>Here \(\mathcal{X}\subseteq \mathbb{R}^{I_x}\) is a feasible of \(\pmb{x}\) which is second-order conic or exponential conic representable, \(\pmb{b}_m\in\mathbb{R}^{I_y}\), \(m \in \mathcal{M}_1\cup \{0\}\) are fixed parameters of \(\pmb{y}\), and uncertain parameters \(\pmb{a}_m(\pmb{z})\) as well as \(c_m(\pmb{z})\) are expressed as affine mappings of random variable \(\pmb{z}\):</p>
+
+\[\begin{align}
+\pmb{a}_m(\pmb{z}) := \pmb{a}_m^0 + \sum\limits_{j\in[J]}\pmb{a}_m^jz_j ~~\text{and}~~ c_m(\pmb{z}) := c_m^0 + \sum\limits_{j\in[J]}c_m^jz_j.
+\end{align}\]
+
+<p>where \(\pmb{a}_m^j\in\mathbb{R}^{I_x}\) and \(c_m^j\in\mathbb{R}\), indexed by \(j\in[J]\cup\{0\}\) and \(\mathcal{M}_1\cup \{0\}\), are proper coefficients. The wait-and-see decision \(\pmb{y}\), which can potentially be an arbitrary functional of uncertainty realization \(\pmb{z}\), is infinite-dimensional, and thus is hard to optimize. A common robust optimization technique for tractability, called linear decision rule (or affine decision rule), is to restrict y to simpler and easy-to-optimize affine functions in the following form:</p>
+
+\[\begin{align}
+\mathcal{L}(\mathcal{J}) := \left\{y: \mathbb{R}^{[\mathcal{J}]} \mapsto \mathbb{R} \left|
+y(\pmb{z}) = y^0 + \sum\limits_{j\in\mathcal{J}}y^jz_j
+\right.
+\right\}.
+\end{align}\]
+
+<p>The RSOME package provides rich algebraic tools for specifying random variables arrays, linear decision rules, uncertainty sets, the worst-case objective and constraints of a robust model, which will be introduced in the subsequent sections.</p>
+
+<h2 id="random-variables-and-uncertainty-sets-">Random Variables and Uncertainty Sets <a name="section2.2"></a></h2>
+
+<p>Similar to decision variables, random variables are created as arrays in RSOME, and the shapes of random variable arrays are specified by the <code class="language-plaintext highlighter-rouge">rvar()</code> method of the <code class="language-plaintext highlighter-rouge">Model</code> object.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rvar(shape=(1,), name=None) method of rsome.ro.Model instance
+    Returns an array of random variables with the given shape.
+
+    Parameters
+    ----------
+    shape : int or tuple
+        Shape of the variable array.
+    name : str
+        Name of the variable array
+
+    Returns
+    -------
+    new_var : rsome.lp.Vars
+        An array of new random variables
+</code></pre></div></div>
+
+<p>All array operations, convex functions, and NumPy-style syntax for decision variables can also be applied to random variables in defining uncertainty sets. For example, let \(\pmb{z}\in\mathbb{R}^5\) be the vector of random variables, an uncertainty set \(\mathcal{Z}_0 = \left\{\pmb{z} \left| \|\pmb{z}\|_{\infty} \leq 1, \|\pmb{z}\|_1 \leq 1.5 \right. \right\}\) can be defined as <code class="language-plaintext highlighter-rouge">z_set0</code> in the following code segment.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">ro</span>
+<span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ro</span><span class="p">.</span><span class="n">Model</span><span class="p">()</span>                 <span class="c1"># create a model object
+</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">rvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>                  <span class="c1"># 5 random variables as an 1D array
+</span>
+<span class="n">z_set0</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span>    <span class="c1"># the infinity-norm constraint
+</span>          <span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.5</span><span class="p">)</span>       <span class="c1"># the one-norm constraint
+</span></code></pre></div></div>
+
+<p>Note that an uncertainty set is a collection of constraints, written as an iterable Python object, such as <code class="language-plaintext highlighter-rouge">tuple</code> or <code class="language-plaintext highlighter-rouge">list</code>. These constraints are then used in specifying the worst-case objective function and constraints, which are introduced in the next section.</p>
+
+<h2 id="the-worst-case-objective-and-constraints-">The Worst-Case Objective and Constraints <a name="section2.3"></a></h2>
+
+<p>In the case of minimizing or maximizing the worst-case objective function in ROMSE, we may use the <code class="language-plaintext highlighter-rouge">minmax()</code> or the <code class="language-plaintext highlighter-rouge">maxmin()</code> method of the <code class="language-plaintext highlighter-rouge">Model</code> object to specify the objective function and the uncertainty set.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minmax(obj, *args) method of rsome.ro.Model instance
+    Minimize the maximum objective value over the given uncertainty set.
+
+    Parameters
+    ----------
+    obj
+        Objective function involving random variables
+    *args
+        Constraints or collections of constraints of random variables
+        used for defining the uncertainty set
+
+    Notes
+    -----
+    The uncertainty set defined for the objective function is considered
+    the default uncertainty set for the robust model.
+</code></pre></div></div>
+<p>The documentation shows that the objective function of the robust model is specified by the first argument <code class="language-plaintext highlighter-rouge">obj</code>, while the remaining arguments could be constraints, or collection of constraints, used for defining the uncertainty set. The <code class="language-plaintext highlighter-rouge">minmax()</code> and <code class="language-plaintext highlighter-rouge">maxmin()</code> methods thus enable two approaches for specifying the worst-case objective, as shown by the sample code below.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">ro</span>
+<span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ro</span><span class="p">.</span><span class="n">Model</span><span class="p">()</span>   
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">dvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>                <span class="c1"># 5 decision variables as a 1D array
+</span><span class="n">z</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">rvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>                <span class="c1"># 5 random variables as a 1D array
+</span>
+<span class="c1"># define the uncertainty set z_set0 as a tuple
+</span><span class="n">z_set0</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span>   
+          <span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># the worst-case objective over the uncertainty set z_set0
+</span><span class="n">model</span><span class="p">.</span><span class="n">minmax</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">z</span><span class="p">,</span> <span class="n">z_set0</span><span class="p">)</span>    
+
+<span class="c1"># the worst-case objective over an uncertainty set defined by two constraints
+</span><span class="n">model</span><span class="p">.</span><span class="n">minmax</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">z</span><span class="p">,</span> <span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.25</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Similar to deterministic constraints, the worst-case constraints can be defined using the NumPy-style array operations, and the associated uncertainty set is specified using the <code class="language-plaintext highlighter-rouge">forall()</code> method of the constraint.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>forall(*args) method of rsome.lp.RoConstr instance
+    Specify the uncertainty set of the constraints involving random
+    variables. The given arguments are constraints or collections of
+    constraints used for defining the uncertainty set.
+
+    Notes
+    -----
+    The uncertainty set defined by this method overrides the default
+    uncertainty set defined for the worst-case objective.
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">forall()</code> method enables users to flexibly define the worst-case constraints, as demonstrated by the sample code below.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">ro</span>
+<span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">norm</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ro</span><span class="p">.</span><span class="n">Model</span><span class="p">()</span>   
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">dvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">rvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># define an ellipsoidal uncertainty set z_set0
+</span><span class="n">z_set0</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.5</span>
+
+<span class="c1"># the worst-case objective over the uncertainty set z_set0
+</span><span class="n">model</span><span class="p">.</span><span class="n">minmax</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">z</span><span class="p">,</span> <span class="n">z_set0</span><span class="p">)</span>    
+
+<span class="c1"># worst-case constraints over the uncertainty set z_set0
+</span><span class="n">model</span><span class="p">.</span><span class="n">st</span><span class="p">((</span><span class="n">x</span> <span class="o">*</span> <span class="n">z</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">).</span><span class="n">forall</span><span class="p">(</span><span class="n">z_set0</span><span class="p">))</span>      
+<span class="n">model</span><span class="p">.</span><span class="n">st</span><span class="p">((</span><span class="n">x</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">).</span><span class="n">forall</span><span class="p">(</span><span class="n">z_set0</span><span class="p">))</span>        
+
+<span class="c1"># worst-case constraints over different uncertainty sets defined by a loop
+</span><span class="n">model</span><span class="p">.</span><span class="n">st</span><span class="p">((</span><span class="n">x</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">z</span><span class="p">[:</span><span class="n">i</span><span class="p">].</span><span class="nb">sum</span><span class="p">()).</span><span class="n">forall</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Note that if the uncertainty set of a robust constraint is unspecified, then by default, its uncertainty set is \(\mathcal{Z}_0\), defined by the <code class="language-plaintext highlighter-rouge">minmax()</code> or <code class="language-plaintext highlighter-rouge">maxmin()</code> methods for the worst-case objective. The sample code above is hence equivalent to the following code segment.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">ro</span>
+<span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">norm</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ro</span><span class="p">.</span><span class="n">Model</span><span class="p">()</span>   
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">dvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">rvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># define an ellipsoidal uncertainty set z_set0
+</span><span class="n">z_set0</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.5</span>
+
+<span class="c1"># the worst-case objective over the default uncertainty set z_set0
+</span><span class="n">model</span><span class="p">.</span><span class="n">minmax</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">z</span><span class="p">,</span> <span class="n">z_set0</span><span class="p">)</span>    
+
+<span class="c1"># worst-case constraints over the default uncertainty set z_set0
+</span><span class="n">model</span><span class="p">.</span><span class="n">st</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">z</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">)</span>      
+<span class="n">model</span><span class="p">.</span><span class="n">st</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>        
+
+<span class="c1"># worst-case constraints over uncertainty sets different from the default one
+</span><span class="n">model</span><span class="p">.</span><span class="n">st</span><span class="p">((</span><span class="n">x</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">z</span><span class="p">[:</span><span class="n">i</span><span class="p">].</span><span class="nb">sum</span><span class="p">()).</span><span class="n">forall</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>The sample code above shows that the Python version of RSOME is able to specify different uncertainty sets \(\mathcal{Z}_m\), \(m\in\mathcal{M}_1\cup\{0\}\), for the objective function (with index 0) and each of the constraints (with index \(m\in\mathcal{M}_1\)).  Such a framework is more flexible than that in the MATLAB version introduced in <a href="#ref2">Chen et al.  (2020)</a> and can be used to address a rich range of robust models, including the distributional interpretation of robust
+formulation in <a href="#ref4">Xu et al. (2012)</a>, the notion of Pareto robustly optimal solution discussed in <a href="#ref3">de Ruiter et al. (2016)</a>, as well as the sample robust optimization models proposed by <a href="#ref1">Bertsimas et al. (2021)</a>.</p>
+
+<h2 id="linear-decision-rules-for-adaptive-decision-making-">Linear Decision Rules for Adaptive Decision-Making <a name="section2.4"></a></h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">rsome.ro</code> modeling environment also supports linear decision rules for non-anticipative decision-making. A linear decision rule object can be created by the <code class="language-plaintext highlighter-rouge">ldr()</code> method of an <code class="language-plaintext highlighter-rouge">ro</code> model. Details of the method are provided below.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldr(shape=(1,), name=None) method of rsome.ro.Model instance
+    Returns an array with the given shape of linear decision rule
+    variables.
+
+    Parameters
+    ----------
+    shape : int or tuple
+        Shape of the variable array.
+    name : str
+        Name of the variable array
+
+    Returns
+    -------
+    new_var : rsome.ro.DecRule
+        An array of new linear decision rule variables
+</code></pre></div></div>
+
+<p>Decision rules are also defined as arrays, as shown by the following examples.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">rsome</span> <span class="kn">import</span> <span class="n">ro</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ro</span><span class="p">.</span><span class="n">Model</span><span class="p">()</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">ldr</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>       <span class="c1"># 2x4 decision rule variables as a 2D array
+</span><span class="n">y</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">ldr</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>    <span class="c1"># 3x5x4 decision rule variables as a 3D array
+</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2x4 decision rule variables
+3x5x4 decision rule variables
+</code></pre></div></div>
+
+<p>As mentioned in previous sections, the decision rule \(y_i\) is restricted to being affinely depend on a subset \(\mathcal{J}_i\) of random variables, and such a subset can be specified by the <code class="language-plaintext highlighter-rouge">adapt()</code> method of the decision rule object, as shown by the following code segment.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">z</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">rvar</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>      <span class="c1"># 2x4 random variables as a 2D array
+</span><span class="n">u</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">rvar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>           <span class="c1"># 5 random variables as a 1D array
+</span>
+<span class="n">x</span><span class="p">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>                  <span class="c1"># all elements of x depends on all z elements
+</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:,</span> <span class="p">:].</span><span class="n">adapt</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># y[2, 3:, :] depends on z[0, 1]
+</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">:,</span> <span class="p">:].</span><span class="n">adapt</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span>    <span class="c1"># y[1, 3:, :] depends on u[3:]
+</span></code></pre></div></div>
+
+<p>Once the decision rules are created and the affine dependency on random variables is specified, the aforementioned array operations and syntax can be applied to decision rule arrays in constructing constraints involving adaptive decisions. The affine dependency must be specified before using decision rule variables in constraints, otherwise an error message will be given.</p>
+
+<p>Finally, after the model is solved, coefficients of a decision rule <code class="language-plaintext highlighter-rouge">y</code> could be accessed by the <code class="language-plaintext highlighter-rouge">get()</code> method. More specifically:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">y.get()</code> returns the constant coefficients of the decision rule <code class="language-plaintext highlighter-rouge">y</code>. The returned array has the same shape as the decision rule array <code class="language-plaintext highlighter-rouge">y</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">y.get(z)</code> returns the linear coefficients of <code class="language-plaintext highlighter-rouge">y</code> with respect to the random variable <code class="language-plaintext highlighter-rouge">z</code>. The shape of the returned array is <code class="language-plaintext highlighter-rouge">y.shape + z.shape</code>, <i>i.e.</i>, the combination of dimensions of <code class="language-plaintext highlighter-rouge">y</code> and <code class="language-plaintext highlighter-rouge">z</code>. For example, if <code class="language-plaintext highlighter-rouge">c = y.get(z)</code> where <code class="language-plaintext highlighter-rouge">y.dim=2</code> and <code class="language-plaintext highlighter-rouge">z.dim=2</code>, the returned coefficients are presented as a four-dimensional array <code class="language-plaintext highlighter-rouge">c</code> and <code class="language-plaintext highlighter-rouge">c[i, j]</code> gives the linear coefficients of <code class="language-plaintext highlighter-rouge">y[i, j]</code> with respect to the random variable <code class="language-plaintext highlighter-rouge">z</code>.</li>
+</ul>
+
+<h2 id="application-examples-">Application Examples <a name="section2.5"></a></h2>
+
+<h3 id="robust-portfolio"><a href="example_ro_portfolio">Robust Portfolio</a></h3>
+<h3 id="conditional-value-at-risk-in-robust-portfolio-management"><a href="example_ro_cvar_portfolio">Conditional Value-at-Risk in Robust Portfolio Management</a></h3>
+<h3 id="robustrobustness-knapsack"><a href="example_ro_knapsack">Robust/Robustness Knapsack</a></h3>
+<h3 id="adaptive-robust-lot-sizing"><a href="example_ls">Adaptive Robust Lot-Sizing</a></h3>
+<h3 id="joint-production-inventory"><a href="example_ro_inv">Joint Production-Inventory</a></h3>
+<h3 id="robust-vehicle-pre-allocation"><a href="example_ro_vehicle">Robust Vehicle Pre-Allocation</a></h3>
+
+<h2 id="reference">Reference</h2>
+
+<p><a id="ref1"></a></p>
+
+<p>Bertsimas, Dimitris, Shimrit Shtern, and Bradley Sturt. 2021. <a href="https://pubsonline.informs.org/doi/abs/10.1287/opre.2020.2096">Two-stage sample robust optimization</a>. <i>Operations Research</i>.</p>
+
+<p><a id="ref2"></a></p>
+
+<p>Chen, Zhi, Melvyn Sim, Peng Xiong. 2020. <a href="https://pubsonline.informs.org/doi/abs/10.1287/mnsc.2020.3603">Robust stochastic optimization made easy with RSOME</a>. <i>Management Science</i> <b>66</b>(8) 3329–3339.</p>
+
+<p><a id="ref3"></a>
+de Ruiter, Frans JCT, Ruud CM Brekelmans, and Dick den Hertog. 2016. <a href="https://link.springer.com/article/10.1007/s10107-016-0978-6">The impact of the existence of multiple adjustable robust solutions</a>. <i>Mathematical Programming</i> <b>160</b>(1) 531-545.</p>
+
+<p><a id="ref4"></a>
+Xu, Huan, Constantine Caramanis, and Shie Mannor. 2012. <a href="https://pubsonline.informs.org/doi/abs/10.1287/moor.1110.0531">A distributional interpretation of robust optimization</a>. <i>Mathematics of Operations Research</i> <b>37</b>(1) 95-110.</p>
+
+
+      </section>
+      <footer>
+        
+        <p>Maintained by <a href="https://github.com/XiongPengNUS">XiongPengNUS</a></p>
+        
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+
+
+  
+  </body>
+</html>
