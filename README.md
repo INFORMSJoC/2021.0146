@@ -30,7 +30,8 @@ Below is the BibTex for citing this version of the code.
   publisher={INFORMS Journal on Computing},
   title={{RSOME} in Python: an open-source package for robust stochastic optimization made easy, Version v2021.0146},
   year={2022},
-  doi={10.5281/zenodo.7463845}
+  doi={10.5281/zenodo.7463845},
+  url={https://github.com/INFORMSJoC/2021.0146}
 }  
 ```
 
