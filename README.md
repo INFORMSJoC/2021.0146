@@ -1,13 +1,13 @@
 [![INFORMS Journal on Computing Logo](https://INFORMSJoC.github.io/logos/INFORMS_Journal_on_Computing_Header.jpg)](https://pubsonline.informs.org/journal/ijoc)
 
-# RSOME in Python: An Open-Source Package for Robust Stochastic Optimization Made Easy
+# [RSOME in Python: An Open-Source Package for Robust Stochastic Optimization Made Easy](https://doi.org/10.1287/ijoc.2023.1291)
 
 This archive is distributed in association with the [INFORMS Journal on
 Computing](https://pubsonline.informs.org/journal/ijoc) under the [MIT License](LICENSE).
 
 The software and data in this repository are a snapshot of the software and data
 that were used in the research reported on in the paper 
-[RSOME in Python: An Open-Source Package for Robust Stochastic Optimization Made Easy](https://doi.org/10.1287/ijoc.2019.0934) by Zhi Chen and Peng Xiong.
+[RSOME in Python: An Open-Source Package for Robust Stochastic Optimization Made Easy](https://doi.org/10.1287/ijoc.2023.1291) by Zhi Chen and Peng Xiong.
 The snapshot is based on 
 [this SHA](https://github.com/tkralphs/JoCTemplate/commit/f7f30c63adbcb0811e5a133e1def696b74f3ba15) 
 in the development repository. 
